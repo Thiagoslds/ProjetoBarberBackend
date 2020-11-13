@@ -12,14 +12,14 @@ sessionsRouter.post('/', async (request, response) => {
         const authenticateUser = new AuthenticateUserService();
 
         //pega o valor do usuario, que é retornado na chamada do service de autenticação
-        const {user} = await authenticateUser.execute({
+        const {user, token} = await authenticateUser.execute({
             email, password
         })
 
         //Não mostrar o password 
         delete user.password;
         
-        return response.json({user});
+        return response.json({user, token});
     } catch(err){
         return response.status(400).json({error: err.message});
     }
