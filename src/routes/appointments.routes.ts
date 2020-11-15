@@ -27,7 +27,6 @@ appointmentsRouter.get('/', async (request,response) => {
 })
 
 appointmentsRouter.post('/', async (request, response) => {
-    try{
         const {provider_id, date} = request.body; //destruct dos valores vindo do insomnia
         const parsedDate = parseISO(date); //conversão da data para o formato Date
         const createAppointment = new CreateAppointmentService(); //instancia do service
@@ -40,9 +39,7 @@ appointmentsRouter.post('/', async (request, response) => {
             provider_id 
         });
         return response.json(appointment);
-    } catch(err){
-        return response.status(400).json({error: err.message});
-    }
+    
 })
 
 export default appointmentsRouter;

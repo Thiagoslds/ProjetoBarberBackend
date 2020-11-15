@@ -3,6 +3,8 @@ import {getCustomRepository} from 'typeorm'; //permite utilizar os métodos padr
 
 import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository'
+import AppError from '../errors/AppError';
+
 
 //Interfaces são utilizadas em typescript, servindo como modelo para requerimento em função
 interface Request{
@@ -23,7 +25,7 @@ class CreateAppointmentService{
 
         //se retornar como verdadeiro é pq ja utilizou o horario para agendamento
         if(findAppointmentInSameDate){
-            throw Error('Esse agendamento já está sendo utilizado');
+            throw new AppError('Esse agendamento já está sendo utilizado');
         }
         //cria um agendamento com o fornecedor e a hora determinada, não precisa ser assincrona pois
         //ela apenas instancia, não salva no banco de dados

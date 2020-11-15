@@ -2,6 +2,8 @@ import {getRepository} from 'typeorm'
 import {hash} from 'bcryptjs'
 
 import User from '../models/Users'
+import AppError from '../errors/AppError';
+
 
 //Executa serviços antes de salvar no banco de dados
 
@@ -21,7 +23,7 @@ class CreateUserService{
         });
 
         if(checkUserExists){
-            throw new Error("Email já existente");
+            throw new AppError("Email já existente");
         }
 
         //criptografar a senha

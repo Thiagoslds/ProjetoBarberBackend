@@ -4,6 +4,8 @@ import fs from 'fs'
 
 import uploadConfig from '../config/upload';
 import User from '../models/Users'
+import AppError from '../errors/AppError';
+
 
 interface Request {
     user_id: string,
@@ -16,7 +18,7 @@ class UpdateUserAvatarService{
         const user = await usersRepository.findOne(user_id);
         //verifica se existe o usuário que foi passado
         if(!user){
-            throw new Error('Somente usuários autenticados.')
+            throw new AppError('Somente usuários autenticados.')
         }
 
         //se ja tiver o avatar, ele exclui o antigo para upar o novo

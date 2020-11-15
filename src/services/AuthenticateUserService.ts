@@ -1,10 +1,10 @@
 import {getRepository} from 'typeorm';
 import {compare} from 'bcryptjs';
 import {sign} from 'jsonwebtoken';
-import authconfig from '../config/auth'
 
+import authconfig from '../config/auth'
 import User from '../models/Users';
-import auth from '../config/auth';
+import AppError from '../errors/AppError';
 
 interface Request{
     email: string;
@@ -23,13 +23,13 @@ class AuthenticateUserService{
         //verifica se o email está correto
         const user = await usersRepository.findOne({where: {email}});
         if(!user){
-            throw new Error('Senha ou email incorretos');
+            throw new AppError('Senha ou email incorretos', 401);
         }
 
         //Verifica se a senha está correta, com o metodo compare do bcrypt
         const passwordMatched = await compare(password, user.password);
         if(!passwordMatched){
-            throw new Error('Senha ou email incorretos');
+            throw new AppError('Senha ou email incorretos', 401);
         }
 
         //destruct em cima do auth.ts

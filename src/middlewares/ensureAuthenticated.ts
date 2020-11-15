@@ -1,6 +1,7 @@
 import authConfig from '../config/auth'
 import { Request, Response, NextFunction } from 'express'
 import {verify} from 'jsonwebtoken'
+import AppError from '../errors/AppError';
 
 interface TokenPayLoad{
     iat: number; //referente a quando o token foi gerado
@@ -19,7 +20,7 @@ export default function ensureAuthenticated(
     //pega os tokens do cabeçalho da requisição
     const authHeader = request.headers.authorization;
     if(!authHeader){
-        throw new Error('Token JWT não encontrado.');
+        throw new AppError('Token JWT não encontrado.', 401);
     }
 
     /*Beared xxxxxxXx
@@ -39,6 +40,6 @@ export default function ensureAuthenticated(
 
         return next();
     } catch{ //catch sem parametro a principio so em ts
-        throw new Error('TOken JWT Inválido');
+        throw new AppError('Token JWT Inválido', 401);
     }
 }
