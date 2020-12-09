@@ -1,14 +1,17 @@
+/*Arquivo Principal primário*/
+
 import 'reflect-metadata'; //necessário para o typescript e utilização de decorators
 
 import express, {Request, Response, NextFunction} from 'express';
 import cors from 'cors';
 import 'express-async-errors';
+import '@shared/container'
 
 import routes from '@shared/infra/http/routes'
 import uploadConfig from '@config/upload'
 import AppError from '@shared/errors/AppError';
 
-import '@shared/database';
+import '@shared/infra/typeorm';
 
 const app = express();
 

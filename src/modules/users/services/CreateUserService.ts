@@ -1,9 +1,9 @@
-import {getRepository} from 'typeorm'
 import {hash} from 'bcryptjs'
+import {inject, injectable} from 'tsyringe'
 
 import User from '@modules/users/infra/typeorm/entities/Users'
 import AppError from '@shared/errors/AppError';
-
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 
 //Executa serviços antes de salvar no banco de dados
 
@@ -13,14 +13,16 @@ interface Request{
     password: string
 }
 
+@injectable()
 class CreateUserService{
-    public async execute({name, email, password}: Request): Promise<User> {
-        const usersRepository = getRepository(User);
+    constructor (
+        @inject('UsersRepository')
+        private usersRepository: IUsersRepository
+        ){}
 
+    public async execute({name, email, password}: Request): Promise<User> {
         //Checar se existe email duplicado
-        const checkUserExists = await usersRepository.findOne({
-            where: {email}
-        });
+        const checkUserExists = await this.usersRepository.findByEmail(email);
 
         if(checkUserExists){
             throw new AppError("Email já existente");
@@ -29,11 +31,9 @@ class CreateUserService{
         //criptografar a senha
         const hashedPassword = await hash(password, 8);
 
-        const user = usersRepository.create({
+        const user = this.usersRepository.create({
             name, email, password: hashedPassword
         });
-
-        await usersRepository.save(user);
 
         return user;
     }
