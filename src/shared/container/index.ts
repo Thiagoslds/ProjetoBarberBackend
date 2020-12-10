@@ -3,6 +3,9 @@
 
 import {container} from 'tsyringe';
 
+import '@modules/users/providers'; //chama o gerador hash criado para injetar dependencia
+import './providers' //chama o providers de salvamento dos arquivos
+
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
 

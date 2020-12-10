@@ -6,7 +6,7 @@ import uploadConfig from '@config/upload';
 import User from '@modules/users/infra/typeorm/entities/Users'
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
-
+import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider'
 
 interface Request {
     user_id: string,
@@ -17,7 +17,10 @@ interface Request {
 class UpdateUserAvatarService{
     constructor (
         @inject('UsersRepository')
-        private usersRepository: IUsersRepository
+        private usersRepository: IUsersRepository,
+
+        @inject('StorageProvider')
+        private storageProvider: IStorageProvider
         ){}
 
     public async execute({user_id, avatarFilename}: Request):Promise <User>{
@@ -28,21 +31,14 @@ class UpdateUserAvatarService{
             throw new AppError('Somente usuários autenticados.')
         }
 
-        //se ja tiver o avatar, ele exclui o antigo para upar o novo
-        if(user.avatar){
-            //caminho para o arquivo com imagem do avatar, usando o endereço que esta no upload
-            const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar)
-            //utilizando o modulo fs, filestream, do node, verifica o status do arquivo, utilizando
-            //para verificar se ja possui o arquivo no caminho
-            const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
-        
-            //deleta o arquivo do caminho especificado
-            if(userAvatarFileExists){
-                await fs.promises.unlink(userAvatarFilePath);
-            }
-        }
-        //subtitui o caminho antigo com o novo arquivo
-        user.avatar = avatarFilename;
+        //se ja tiver o avatar, ele exclui o antigo para poder upar o novo
+        if(user.avatar) 
+            await this.storageProvider.deleteFile(user.avatar);
+
+        /*chama a função para poder salvar o novo avatar*/
+        const filename = await this.storageProvider.saveFile(avatarFilename);
+
+        user.avatar = filename;
 
         await this.usersRepository.save(user);
 
