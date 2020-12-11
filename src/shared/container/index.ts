@@ -12,6 +12,9 @@ import AppointmentsRepository from '@modules/appointments/infra/typeorm/reposito
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepository';
 
+import IUsersTokensRepository from '@modules/users/repositories/IUsersTokensRepository';
+import UsersTokensRepository from '@modules/users/infra/typeorm/repositories/UsersTokensRepository';
+
 /*Singleton carrega apenas uma vez, utilizando apenas uma instancia*/
 container.registerSingleton<IAppointmentsRepository>(
     'AppointmentsRepository', //Pode ser qualquer nome
@@ -21,4 +24,9 @@ container.registerSingleton<IAppointmentsRepository>(
 container.registerSingleton<IUsersRepository>(
     'UsersRepository', //Pode ser qualquer nome
     UsersRepository
+)
+
+container.registerSingleton<IUsersTokensRepository>(
+    'UsersTokensRepository', //Pode ser qualquer nome
+    UsersTokensRepository
 )

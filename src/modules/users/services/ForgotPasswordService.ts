@@ -19,7 +19,7 @@ class ForgotPasswordService{
         @inject('MailProvider')
         private mailProvider: IMailProviders,
 
-        @inject('UserTokensRepository')
+        @inject('UsersTokensRepository')
         private userTokensRepository:IUsersTokensRepository
     ){}
 
