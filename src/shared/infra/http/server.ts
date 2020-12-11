@@ -1,4 +1,7 @@
-/*Arquivo Principal primário*/
+/*Arquivo Principal primário
+Através do Express, chama o index do Routes, com as rotas para cada parte da aplicação
+
+*/
 
 import 'reflect-metadata'; //necessário para o typescript e utilização de decorators
 

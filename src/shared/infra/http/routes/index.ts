@@ -1,3 +1,5 @@
+/*Define as rotas de cada parte da aplicação*/
+
 import {Router} from 'express'
 
 import appointmentsRouter from '@modules/appointments/infra/http/routes/appointments.routes'
