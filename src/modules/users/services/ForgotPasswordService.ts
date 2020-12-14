@@ -1,6 +1,7 @@
 /*Serviço para enviar um email de recuperação de senha*/
 
 import {injectable, inject} from 'tsyringe';
+import path from 'path';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IMailProviders from '@shared/container/providers/MailProvider/models/IMailProviders'
 import AppError from '@shared/errors/AppError';
@@ -30,11 +31,32 @@ class ForgotPasswordService{
 
         if(!user) throw new AppError("Usuário não existente.");
 
-        await this.userTokensRepository.generate(user.id);
+        /*Pega o token gerado e envia no corpo do email, possibilitando o reset
+        da senha*/
+        const {token} =await this.userTokensRepository.generate(user.id);
+
+        /*caminho para o arquivo de template*/
+        const forgotPasswordTemplate = path.resolve(
+            __dirname,
+            '..',
+            'templates',
+            'forgot_password.hbs'
+        );
         
-        this.mailProvider.sendMail(
-            email,
-            'Pedido de recuperação de senha recebido.'
+        /*Envia o corpo da mensagem e o template com variaveis possibilitados pelo handlebar*/
+        await this.mailProvider.sendMail(
+            {to: {
+                name: user.name,
+                email: user.email
+            },
+            subject: '[GoBarber] Recuperação de senha',
+            templateData: {
+                file: forgotPasswordTemplate,
+                variables: {
+                    name: user.name,
+                    link: `http://localhost:3000/reset_password?token=${token}`
+                }
+            }}
         );
     }
 }

@@ -4,4 +4,4 @@ import IHashProvider from './HashProvider/models/IHashProvider';
 import BCryptHashProvider from './HashProvider/implementations/BCryptHashProvider';
 
 /*Toda vez que tiver uma injeção com nome hashprvider retorna uma instancia da bcrypt*/
-container.registerSingleton<IHashProvider>('HashProvider', BCryptHashProvider);
+container.registerInstance<IHashProvider>('HashProvider', container.resolve(BCryptHashProvider));

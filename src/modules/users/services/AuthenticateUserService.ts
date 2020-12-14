@@ -24,7 +24,7 @@ class AuthenticateUserService{
 
         @inject('HashProvider')
         private hashProvider: IHashProvider
-        ){}
+    ){}
 
     public async execute({email, password}: Request): Promise<Response>{
         //verifica se o email está correto
