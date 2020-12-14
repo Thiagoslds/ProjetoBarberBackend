@@ -1,9 +1,10 @@
-import {EntityRepository, Repository, getRepository} from 'typeorm';
+import {EntityRepository, Repository, getRepository, Not} from 'typeorm';
 //Repositórios servem para manipular (criar, alterar) entidades específicas
 
 import User from '@modules/users/infra/typeorm/entities/Users'; //importa o modelo de entidade definido
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO'
+import IFindAllProvidersDTO from '@modules/users/dtos/IFindAllProvidersDTO';
 
 @EntityRepository(User) /*decorator para usar determinada classe customizada 
 como repositorio */
@@ -26,6 +27,16 @@ class UsersRepository implements IUsersRepository{
             where: {email}
         });
         return user;
+    }
+
+    public async findAllProviders({except_user_id}: IFindAllProvidersDTO): Promise<User[]>{
+        let users: User[];
+        if(except_user_id){
+            users = await this.ormRepository.find({
+                where: {id: Not(except_user_id)} /*todos usuarios exceto o que tiver o id informado*/
+            })
+        }else users = await this.ormRepository.find(); /*se o usuario nao existir lista todos da lista*/
+        return users;
     }
 
     public async create(userData:ICreateUserDTO): Promise<User>{
