@@ -1,9 +1,10 @@
-import {EntityRepository, Repository, getRepository} from 'typeorm';
+import {EntityRepository, Repository, getRepository, Raw} from 'typeorm';
 //Repositórios servem para manipular (criar, alterar) entidades específicas
 
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment'; //importa o modelo de entidade definido
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO'
+import IFindAllInMonthProviderDTO from '@modules/appointments/dtos/IFindAllInMonthProviderDTO';
 
 @EntityRepository(Appointment) /*decorator para usar determinada classe customizada 
 como repositorio 
@@ -39,6 +40,26 @@ class AppointmentsRepository implements IAppointmentsRepository{
         await this.ormRepository.save(appointment);
 
         return appointment;
+    }
+
+    /* */
+    public async findAllInMonthProvider({provider_id, month, year}: IFindAllInMonthProviderDTO):
+     Promise<Appointment[]>{
+        const parsedMonth = String(month).padStart(2, '0'); /*converte o mes para string e 
+        adiciona 0 a esquerda (start), caso nao tenha dois digitos*/
+
+        /* */
+        const appointments = await this.ormRepository.find({
+            where: {
+                provider_id,
+                date: Raw( /*Permite utilizar funções que atuam direto no postgre*/
+                    dateFieldName => 
+                    `to_char(${dateFieldName}, 'MM-YYYY') = '${parsedMonth}-${year}'`
+                )
+            }
+        });
+        
+        return appointments;
     }
 }
 
