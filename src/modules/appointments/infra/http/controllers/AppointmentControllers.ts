@@ -6,6 +6,8 @@ import CreateAppointmentService from '@modules/appointments/services/CreateAppoi
 
 export default class AppointmentControllers{
     public async create(request: Request, response: Response): Promise<Response>{
+        const user_id = request.user.id; /*Ele é setado automatico pelo middleware 
+        ensureAuthenticated, pois é um usuário logado*/
         const {provider_id, date} = request.body; //destruct dos valores vindo do insomnia
         const parsedDate = parseISO(date); //conversão da data para o formato Date
         const createAppointment = container.resolve(CreateAppointmentService);
@@ -19,7 +21,8 @@ export default class AppointmentControllers{
         n posições, sendo n o numero de itens criados*/
         const appointment = await createAppointment.execute({
             date: parsedDate,
-            provider_id 
+            provider_id,
+            user_id
         });
         return response.json(appointment); 
     }

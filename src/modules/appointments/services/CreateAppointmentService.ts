@@ -1,4 +1,4 @@
-import {startOfHour} from 'date-fns'; //date-fns manipula data e hora
+import {startOfHour, isBefore, getHours} from 'date-fns'; //date-fns manipula data e hora
 import {inject, injectable} from 'tsyringe'
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
 import AppError from '@shared/errors/AppError';
@@ -8,6 +8,7 @@ import IAppointmentsRepository from '@modules/appointments/repositories/IAppoint
 //Interfaces são utilizadas em typescript, servindo como modelo para requerimento em função
 interface Request{
     provider_id: string;
+    user_id: string;
     date: Date;
 }
 
@@ -20,11 +21,21 @@ class CreateAppointmentService{
         ) {}
 
     //função assincrona que requer um date e um provider
-    public async execute({date, provider_id}: Request): Promise<Appointment>{
+    public async execute({date, provider_id, user_id}: Request): Promise<Appointment>{
         const appointmentDate = startOfHour(date); //retorna a hora inicial da data que foi passada
 
+        if(isBefore(appointmentDate, Date.now())) 
+            throw new AppError('Você não pode agendar uma data passada.')
+
+        if(user_id === provider_id)
+            throw new AppError('Você não pode agendar consigo próprio.')
+
+        if(getHours(appointmentDate)<8 || getHours(appointmentDate)>17)
+            throw new AppError('Você só pode agendar entre 8h e 17h.')
+
         //busca pela mesma data especificada utilizando o repositorio construido
-        const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(appointmentDate)
+        const findAppointmentInSameDate = await this.appointmentsRepository.
+            findByDate(appointmentDate);
 
         //se retornar como verdadeiro é pq ja utilizou o horario para agendamento
         if(findAppointmentInSameDate){
@@ -35,6 +46,7 @@ class CreateAppointmentService{
         //foi definida no AppointmentsRepository
         const appointment = this.appointmentsRepository.create({
             provider_id,
+            user_id,
             date: appointmentDate
         })
 
