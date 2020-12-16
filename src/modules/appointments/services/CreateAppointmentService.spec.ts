@@ -1,17 +1,21 @@
 import FakeAppointmentRepository from '../repositories/fakes/FakeAppointmentRepository'
 import CreateAppointmentService from './CreateAppointmentService';
+import FakeNotificationsRepository from '@modules/notifications/repositories/fakes/FakeNotificationsRepository'
 import AppError from '@shared/errors/AppError';
 
 let fakeAppointmentRepository: FakeAppointmentRepository;
 let createAppointment: CreateAppointmentService;
+let fakeNotificationsRepository: FakeNotificationsRepository;
 
 /*describe com um conjunto de testes pertencentes a uma categoria e o it faz
 o mesmo que test*/
 describe('CreateAppointment', ()=>{
         /*Executa essa função antes de cada it, contendo as instancias das variaveis*/
     beforeEach(()=>{
+        fakeNotificationsRepository = new FakeNotificationsRepository();
         fakeAppointmentRepository = new FakeAppointmentRepository();
-        createAppointment = new CreateAppointmentService(fakeAppointmentRepository);
+        createAppointment = new CreateAppointmentService(fakeAppointmentRepository,
+             fakeNotificationsRepository);
     })
 
     it('deveria ser capaz de criar um novo agendamento em determinada data', async ()=>{

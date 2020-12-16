@@ -1,4 +1,4 @@
+/*Cria as conexões dentro do ormconfig*/
+import {createConnections} from 'typeorm';
 
-import {createConnection} from 'typeorm';
-
-createConnection();
+createConnections();

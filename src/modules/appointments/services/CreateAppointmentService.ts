@@ -1,9 +1,11 @@
-import {startOfHour, isBefore, getHours} from 'date-fns'; //date-fns manipula data e hora
+import {startOfHour, isBefore, getHours, format} from 'date-fns'; //date-fns manipula data e hora
 import {inject, injectable} from 'tsyringe'
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
 import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 
+/*Serviço para o usuário criar um agendamento com algum prestador*/
 
 //Interfaces são utilizadas em typescript, servindo como modelo para requerimento em função
 interface Request{
@@ -17,7 +19,10 @@ class CreateAppointmentService{
     //Pelo SOLID, o serviço depende de uma interface, não do typeorm em si*/
     constructor(
         @inject('AppointmentsRepository')
-        private appointmentsRepository: IAppointmentsRepository
+        private appointmentsRepository: IAppointmentsRepository,
+
+        @inject('NotificationsRepository')
+        private notificationsRepository: INotificationsRepository
         ) {}
 
     //função assincrona que requer um date e um provider
@@ -48,6 +53,15 @@ class CreateAppointmentService{
             provider_id,
             user_id,
             date: appointmentDate
+        })
+
+        /*Formata a data para ser utilizada na criação de uma notificação*/
+        /*aspas simples escapa*/
+        const dateFormatted = format(appointmentDate, "dd/MM/yyyy 'às' HH:mm");
+
+        await this.notificationsRepository.create({
+            recipient_id: provider_id,
+            content: `Novo agendamento para dia ${dateFormatted}`
         })
 
         return appointment;
