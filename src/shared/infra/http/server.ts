@@ -1,12 +1,12 @@
 /*Arquivo Principal primário
 Através do Express, chama o index do Routes, com as rotas para cada parte da aplicação
-
 */
 
 import 'reflect-metadata'; //necessário para o typescript e utilização de decorators
-
+import {errors} from 'celebrate';
 import express, {Request, Response, NextFunction} from 'express';
 import cors from 'cors';
+import 'dotenv/config'; //variavel de ambiente, precisa do allowjs no tsconfig
 import 'express-async-errors';
 import '@shared/container'
 import '@modules/users/providers'; //chama o gerador hash criado para injetar dependencia
@@ -25,6 +25,8 @@ app.use(express.json());
 app.use('/files', express.static(uploadConfig.uploadsFolder));
 app.use(routes);
 
+app.use(errors()); /*Manda a mensagem de erro referente a validação de middlewares pelo
+celebrate, sendo necessária para o backend nao receber informações invalidas*/
 app.use(
     (err: Error, request: Request, response: Response, next: NextFunction) => {
         if(err instanceof AppError){

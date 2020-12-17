@@ -1,4 +1,5 @@
 import {Router} from 'express';
+import {celebrate, Segments, Joi} from 'celebrate'; //validação de middleware
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated'
 import ProvidersController from '@modules/appointments/infra/http/controllers/ProvidersController'
 import ProviderMonthAvaController from '../controllers/ProviderMonthAvaController';
@@ -17,7 +18,11 @@ providersRouter.use(ensureAuthenticated);
 /*localhost:3333/providers/:id/month-availability
 localhost:3333/providers/:id/day-availability*/
 providersRouter.get('/', providersController.index);
-providersRouter.get('/:provider_id/month-availability', providerMonthAvaController.index);
+providersRouter.get('/:provider_id/month-availability', celebrate({
+    [Segments.PARAMS]: {
+        provider_id: Joi.string().uuid().required()
+    }
+}), providerMonthAvaController.index);
 providersRouter.get('/:provider_id/day-availability', providerDayAvaController.index);
 
 export default providersRouter;
