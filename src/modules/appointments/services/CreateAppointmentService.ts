@@ -4,6 +4,7 @@ import Appointment from '@modules/appointments/infra/typeorm/entities/Appointmen
 import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 /*Serviço para o usuário criar um agendamento com algum prestador*/
 
@@ -22,7 +23,10 @@ class CreateAppointmentService{
         private appointmentsRepository: IAppointmentsRepository,
 
         @inject('NotificationsRepository')
-        private notificationsRepository: INotificationsRepository
+        private notificationsRepository: INotificationsRepository,
+
+        @inject('CacheProvider')
+        private cacheProvider: ICacheProvider
         ) {}
 
     //função assincrona que requer um date e um provider
@@ -46,9 +50,9 @@ class CreateAppointmentService{
         if(findAppointmentInSameDate){
             throw new AppError('Esse agendamento já está sendo utilizado');
         }
-        //cria um agendamento com o fornecedor e a hora determinada, não precisa ser assincrona pois
-        //ela apenas instancia, não salva no banco de dados
-        //foi definida no AppointmentsRepository
+        /* cria um agendamento com o fornecedor e a hora determinada, não precisa ser assincrona pois
+        ela apenas instancia, não salva no banco de dados
+        foi definida no AppointmentsRepository */
         const appointment = this.appointmentsRepository.create({
             provider_id,
             user_id,
@@ -63,6 +67,13 @@ class CreateAppointmentService{
             recipient_id: provider_id,
             content: `Novo agendamento para dia ${dateFormatted}`
         })
+
+        /*Quando um horario novo é criado, necessario apagar o cache do dia */
+        await this.cacheProvider.invalidate(
+            `provider-appointments:${provider_id}:${format(
+            appointmentDate,
+            'yyyy-M-d' 
+        )}`)
 
         return appointment;
     }

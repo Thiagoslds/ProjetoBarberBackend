@@ -1,18 +1,13 @@
 import FakeUserRepository from '../repositories/fakes/FakeUserRepository'
 import AppError from '@shared/errors/AppError';
-import ForgotPasswordService from './ForgotPasswordService';
 import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider'
 import FakeUserTokensRepository from '@modules/users/repositories/fakes/FakeUsersTokensRepository'
 import ShowProfileService from './ShowProfileService'
-import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
-
 
 let fakeUserRepository: FakeUserRepository;
 let fakeMailProvider: FakeMailProvider;
 let fakeUserTokensRepository: FakeUserTokensRepository;
-let forgotPassword: ForgotPasswordService;
 let showProfile: ShowProfileService;
-let fakeHashProvider: FakeHashProvider;
 
 /*describe com um conjunto de testes pertencentes a uma categoria e o it faz
 o mesmo que test*/

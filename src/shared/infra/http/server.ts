@@ -14,11 +14,13 @@ import '@modules/users/providers'; //chama o gerador hash criado para injetar de
 import routes from '@shared/infra/http/routes'
 import uploadConfig from '@config/upload'
 import AppError from '@shared/errors/AppError';
+import rateLimiter from './middlewares/rateLimiter'
 
 import '@shared/infra/typeorm';
 
 const app = express();
 
+app.use(rateLimiter);
 app.use(cors()); //Evita sites que não são confiaveis e monitora o acesso; nao precisa pro insomnia e native
 app.use(express.json());
 //visualização dos arquivos de forma estática, por ex. dentro do navegador

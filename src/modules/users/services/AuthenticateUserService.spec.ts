@@ -4,19 +4,27 @@ import AuthenticateUserService from './AuthenticateUserService';
 import CreateUserService from './CreateUserService';
 import AppError from '@shared/errors/AppError';
 import auth from '@config/auth';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
+let fakeUserRepository: FakeUserRepository;
+let fakeHashProvider: FakeHashProvider;
+let createUser: CreateUserService;
+let fakeCacheProvider: FakeCacheProvider;
+let authenticateUser: AuthenticateUserService;
 
 describe('AuthenticateUser', ()=>{
+    beforeEach(()=>{
+        fakeUserRepository = new FakeUserRepository();
+        fakeHashProvider = new FakeHashProvider();
+        fakeCacheProvider = new FakeCacheProvider();
+        authenticateUser = new AuthenticateUserService(fakeUserRepository, fakeHashProvider);
+        createUser = new CreateUserService(fakeUserRepository, 
+            fakeHashProvider, fakeCacheProvider);
+    })
     it('deve ser capaz de autenticar um novo usuario', async ()=>{
-  
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-
-        const authenticateUser = new AuthenticateUserService(fakeUserRepository, fakeHashProvider);
-        const createUserService = new CreateUserService(fakeUserRepository, fakeHashProvider);
 
         /*Cria um usuario para teste e depois autentica*/
-        const user = await createUserService.execute({
+        const user = await createUser.execute({
             name: 'Fulano',
             email: 'fulano@johndoe.com',
             password: '123456'
@@ -35,14 +43,8 @@ describe('AuthenticateUser', ()=>{
    
     it('nao deve ser capaz de autenticar usuario que não existe', async ()=>{
   
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-
-        const authenticateUser = new AuthenticateUserService(fakeUserRepository, fakeHashProvider);
-        const createUserService = new CreateUserService(fakeUserRepository, fakeHashProvider);
-
         /*Cria um usuario para teste e depois autentica com um usuario que nao existe*/
-        await createUserService.execute({
+        await createUser.execute({
             name: 'Fulano',
             email: 'fulano@johndoe.com',
             password: '123456'
@@ -57,15 +59,8 @@ describe('AuthenticateUser', ()=>{
     })
 
     it('nao deve ser capaz de autenticar uma senha errada', async ()=>{
-  
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-
-        const authenticateUser = new AuthenticateUserService(fakeUserRepository, fakeHashProvider);
-        const createUserService = new CreateUserService(fakeUserRepository, fakeHashProvider);
-
         /*Cria um usuario para teste e depois tenta autenticar com uma senha errada*/
-        await createUserService.execute({
+        await createUser.execute({
             name: 'Fulano',
             email: 'fulano@johndoe.com',
             password: '123456'

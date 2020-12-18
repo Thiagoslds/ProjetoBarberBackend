@@ -1,8 +1,10 @@
 import FakeAppointmentRepository from '../repositories/fakes/FakeAppointmentRepository'
 import ListProviderAppointmentsService from './ListProviderAppointmentsService'
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
 let listProviderAppointments: ListProviderAppointmentsService;
 let fakeAppointmentRepository: FakeAppointmentRepository;
+let fakeCacheProvider: FakeCacheProvider;
 
 /*describe com um conjunto de testes pertencentes a uma categoria e o it faz
 o mesmo que test*/
@@ -10,7 +12,9 @@ describe('ListProviders', ()=>{
     /*Executa essa função antes de cada it, contendo as instancias das variaveis*/
     beforeEach(()=>{
         fakeAppointmentRepository = new FakeAppointmentRepository();
-        listProviderAppointments = new ListProviderAppointmentsService(fakeAppointmentRepository);
+        fakeCacheProvider = new FakeCacheProvider();
+        listProviderAppointments = new ListProviderAppointmentsService(fakeAppointmentRepository,
+            fakeCacheProvider);
     })
 
     it('deve ser capaz de listar o agendamento em um dia especifico', async ()=>{

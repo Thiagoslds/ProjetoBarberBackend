@@ -1,8 +1,10 @@
 import FakeUserRepository from '@modules/users/repositories/fakes/FakeUserRepository'
 import AppError from '@shared/errors/AppError';
 import ListProviderService from './ListProviderService'
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
 let listProvider: ListProviderService;
+let fakeCacheProvider: FakeCacheProvider;
 let fakeUserRepository: FakeUserRepository;
 
 /*describe com um conjunto de testes pertencentes a uma categoria e o it faz
@@ -11,7 +13,8 @@ describe('ListProviders', ()=>{
     /*Executa essa função antes de cada it, contendo as instancias das variaveis*/
     beforeEach(()=>{
         fakeUserRepository = new FakeUserRepository();
-        listProvider = new ListProviderService(fakeUserRepository);
+        fakeCacheProvider = new FakeCacheProvider();
+        listProvider = new ListProviderService(fakeUserRepository, fakeCacheProvider);
     })
 
     it('deve ser capaz de listar os prestadores', async ()=>{

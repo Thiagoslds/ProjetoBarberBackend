@@ -3,6 +3,7 @@ import IHashProvider from '@modules/users/providers/HashProvider/models/IHashPro
 import User from '@modules/users/infra/typeorm/entities/Users'
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 //Executa serviços antes de salvar no banco de dados
 
@@ -18,7 +19,10 @@ class CreateUserService{
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
         @inject('HashProvider')
-        private hashProvider: IHashProvider
+        private hashProvider: IHashProvider,
+        
+        @inject('CacheProvider')
+        private cacheProvider: ICacheProvider
         ){}
 
     public async execute({name, email, password}: Request): Promise<User> {
@@ -35,6 +39,9 @@ class CreateUserService{
         const user = this.usersRepository.create({
             name, email, password: hashedPassword
         });
+
+        /*Apaga todo o cache salvo com os usuarios cadastrados, pois tem um novo usuario agora*/
+        await this.cacheProvider.invalidatePrefix('providers-list');
 
         return user;
     }

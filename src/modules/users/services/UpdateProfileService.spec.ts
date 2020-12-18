@@ -1,16 +1,13 @@
 import FakeUserRepository from '../repositories/fakes/FakeUserRepository'
 import AppError from '@shared/errors/AppError';
-import ForgotPasswordService from './ForgotPasswordService';
 import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider'
 import FakeUserTokensRepository from '@modules/users/repositories/fakes/FakeUsersTokensRepository'
 import UpdateProfile from './UpdateProfileService'
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 
-
 let fakeUserRepository: FakeUserRepository;
 let fakeMailProvider: FakeMailProvider;
 let fakeUserTokensRepository: FakeUserTokensRepository;
-let forgotPassword: ForgotPasswordService;
 let updateProfile: UpdateProfile;
 let fakeHashProvider: FakeHashProvider;
 
