@@ -3,6 +3,7 @@ import IAppointmentsRepository from '../repositories/IAppointmentsRepository'
 import Appointment from '../infra/typeorm/entities/Appointment';
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import { ca } from 'date-fns/locale';
+import { classToClass } from 'class-transformer';
 
 /*Lista o agendamento diario de um prestador que queira ver sua agenda*/
 
@@ -40,7 +41,7 @@ export default class ListProviderAppointmentsService {
             provider_id, year, month, day
             });
 
-            await this.cacheProvider.save(cacheKey, appointments);
+            await this.cacheProvider.save(cacheKey, classToClass(appointments));
         }
 
         return appointments;

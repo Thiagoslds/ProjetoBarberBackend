@@ -12,10 +12,11 @@ class AppointmentsRepository implements IAppointmentsRepository{
     private appointments: Appointment[] = []; /*cria um array para armazenar cada criação
     de appointment*/
 
-    public async findByDate(date: Date): Promise<Appointment|undefined>{
+    public async findByDate(date: Date, provider_id: string): Promise<Appointment|undefined>{
         /*busca o vetor de appointment*/
         const findAppointment = this.appointments.find(
-            appointment => isEqual(appointment.date, date)
+            appointment => isEqual(appointment.date, date) && 
+            appointment.provider_id === provider_id
         )
         return findAppointment;
     }

@@ -6,11 +6,11 @@ import ListProviderMonthAvaService from '@modules/appointments/services/ListProv
 export default class ProviderMonthAvaController{
     public async index(request: Request, response: Response): Promise<Response>{
         const {provider_id} = request.params;
-        const {month, year} = request.body;
+        const {month, year} = request.query;
         const listProvidersMonth = container.resolve(ListProviderMonthAvaService);
         
         const availability = await listProvidersMonth.execute({
-            provider_id, month, year
+            provider_id, month: Number(month), year: Number(year)
         });
         return response.json(availability); 
     }

@@ -26,10 +26,10 @@ class AppointmentsRepository implements IAppointmentsRepository{
     
     /*como o findONe é uma promessa, deve ser async await. Retorno deve ser uma promise, que
     pode ser um Appointmenr ou null   */
-    public async findByDate(date: Date): Promise<Appointment|undefined>{
+    public async findByDate(date: Date, provider_id: string): Promise<Appointment|undefined>{
         /*metodo definido findOne, encontra a primeira entidade que match as condições dadas*/
         const findAppointment = await this.ormRepository.findOne({
-            where: { date } //condição tem que bater com a data recebida como parâmetro em findbydate
+            where: { date, provider_id } //condição tem que bater com a data recebida como parâmetro em findbydate
         });
 
         return findAppointment;
@@ -82,7 +82,8 @@ class AppointmentsRepository implements IAppointmentsRepository{
                     Ele verifica se é igual ao mes e ano passado pra função, com o mes convertido*/
                     `to_char(${nomeCampo}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`
                 )
-            }
+            },
+            relations: ['user'] //retorna também os dados do usuário. Eager Loading
         });
         
         return appointments;

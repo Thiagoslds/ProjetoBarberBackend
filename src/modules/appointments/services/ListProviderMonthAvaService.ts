@@ -1,6 +1,6 @@
 import {inject, injectable} from 'tsyringe'
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository'
-import { getDaysInMonth, getDate } from 'date-fns'
+import { getDaysInMonth, getDate, isAfter } from 'date-fns'
 
 /*Lista o agendamento mensal de um prestador, se tem alguma disponibilidade naquele dia*/
 
@@ -48,6 +48,9 @@ export default class ListProviderMonthAvaService {
             /*Para cada dia, filtra todos os apontamentos existentes e verifica 
             todos os agendamentos que tem no proprio dia*/
             const availability = eachDayArray.map(day => {
+                /*mostra o dia do mes, na ultima hora do dia*/
+                const compareDate = new Date(year, month-1, day, 23,59,59);
+
                 const appointmentsInDay = appointments.filter(appointmentVar =>{
                     return getDate(appointmentVar.date) === day;
                 })
@@ -56,7 +59,8 @@ export default class ListProviderMonthAvaService {
                 é menor que 10 para ter diponibilidade ou igual se nao tiver vaga*/
                 return {
                     day,
-                    available: appointmentsInDay.length < 10
+                    available: appointmentsInDay.length < 10 && 
+                    isAfter(compareDate, new Date())
                 }
             })
             

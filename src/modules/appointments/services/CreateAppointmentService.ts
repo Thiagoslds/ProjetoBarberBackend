@@ -44,7 +44,7 @@ class CreateAppointmentService{
 
         //busca pela mesma data especificada utilizando o repositorio construido
         const findAppointmentInSameDate = await this.appointmentsRepository.
-            findByDate(appointmentDate);
+            findByDate(appointmentDate, provider_id);
 
         //se retornar como verdadeiro é pq ja utilizou o horario para agendamento
         if(findAppointmentInSameDate){
