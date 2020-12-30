@@ -45,9 +45,9 @@ export default class ListProviderDayAvaService {
         Retorna um array de objetos, com o horario e a disponibilidade*/
         const availability = eachHourArray.map(hour => {
             const hasAppointmentInHour = appointments.find(appointmentVar =>
-                getHours(appointmentVar.date) === hour
+                getHours(appointmentVar.date) === hour /*gethours retorna mais 3 do
+                fuso horario, ao contrario do sethours la do front, do date*/
             );
-
             const compareDate = new Date(year, month-1, day, hour);
 
             /*Se tiver agendamento no horario, passa false

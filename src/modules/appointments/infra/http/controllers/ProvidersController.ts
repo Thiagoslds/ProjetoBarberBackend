@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import {container} from 'tsyringe';
 import ListProviderService from '@modules/appointments/services/ListProviderService';
+import { classToClass } from 'class-transformer';
 
 /*Pega os dados do frontend referentes a lista de providers*/
 export default class ProvidersController{
@@ -11,6 +12,6 @@ export default class ProvidersController{
         const providers = await listProviders.execute({
             user_id
         });
-        return response.json(providers); 
+        return response.json(classToClass(providers)); 
     }
 }

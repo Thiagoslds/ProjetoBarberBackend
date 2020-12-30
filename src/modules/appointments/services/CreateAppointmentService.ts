@@ -32,7 +32,6 @@ class CreateAppointmentService{
     //função assincrona que requer um date e um provider
     public async execute({date, provider_id, user_id}: Request): Promise<Appointment>{
         const appointmentDate = startOfHour(date); //retorna a hora inicial da data que foi passada
-
         if(isBefore(appointmentDate, Date.now())) 
             throw new AppError('Você não pode agendar uma data passada.')
 
